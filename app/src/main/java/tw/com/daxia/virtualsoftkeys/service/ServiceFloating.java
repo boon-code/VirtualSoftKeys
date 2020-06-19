@@ -71,11 +71,11 @@ public class ServiceFloating extends AccessibilityService {
         if (ScreenHepler.isPortrait(getResources())) {
             isPortrait = true;
             updateTouchView(SPFManager.getTouchviewPortraitHeight(this), SPFManager.getTouchviewPortraitWidth(this),
-                    SPFManager.getTouchviewPortraitPosition(this));
+                    SPFManager.getTouchviewPortraitPosition(this), SPFManager.getTouchviewPortraitPositionY(this));
         } else {
             isPortrait = false;
             updateTouchView(SPFManager.getTouchviewLandscapeHeight(this), SPFManager.getTouchviewLandscapeWidth(this),
-                    SPFManager.getTouchviewLandscapePosition(this));
+                    SPFManager.getTouchviewLandscapePosition(this), SPFManager.getTouchviewLandscapePositionY(this));
         }
         if (rotateHidden) {
             hiddenSoftKeyBar(true);
@@ -166,7 +166,8 @@ public class ServiceFloating extends AccessibilityService {
      */
     public void updateTouchView(@Nullable Integer heightPx,
                                 @Nullable Integer widthPx,
-                                @Nullable Integer position) {
+                                @Nullable Integer position,
+                                @Nullable Integer position_y) {
         //set config
         if (touchEventView != null) {
             WindowManager.LayoutParams params = (WindowManager.LayoutParams) touchEventView.getTouchView().getLayoutParams();
@@ -180,6 +181,11 @@ public class ServiceFloating extends AccessibilityService {
             if (position != null) {
                 params.x = position;
             }
+
+            if (position_y != null) {
+                params.y = position_y;
+            }
+
             touchEventView.updateParamsForLocation(windowManager,params);
         }
     }
@@ -214,7 +220,13 @@ public class ServiceFloating extends AccessibilityService {
     public void showSoftKeyBar() {
         if (softKeyBar == null) {
             softKeyBar = new SoftKeyTabletLandscapeView(this);
-            windowManager.addView(softKeyBar.getBaseView(), softKeyBar.getLayoutParamsForLocation());
+            WindowManager.LayoutParams layoutParams = softKeyBar.getLayoutParamsForLocation();
+            if (isPortrait) {
+                layoutParams.y = SPFManager.getTouchviewPortraitPositionY(this);
+            } else {
+                layoutParams.y = SPFManager.getTouchviewLandscapePositionY(this);
+            }
+            windowManager.addView(softKeyBar.getBaseView(), layoutParams);
         } else {
             softKeyBar.getBaseView().setVisibility(View.VISIBLE);
         }

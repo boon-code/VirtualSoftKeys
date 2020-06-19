@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private SeekBar Seek_touch_area_height, Seek_touch_area_width;
     private SeekBar Seek_touch_area_position;
+    private SeekBar Seek_touch_area_position_y;
     private TextView TV_config_name;
     private CheckedTextView CTV_stylus_only_mode,
             CTV_reverse_button,
@@ -100,6 +101,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Seek_touch_area_position = (SeekBar) findViewById(R.id.Seek_touch_area_position);
         Seek_touch_area_position.setOnSeekBarChangeListener(touchviewPositionSeekBarListener);
         Seek_touch_area_position.setSaveEnabled(false);
+
+        Seek_touch_area_position_y = (SeekBar) findViewById(R.id.Seek_touch_area_position_y);
+        Seek_touch_area_position_y.setOnSeekBarChangeListener(touchviewPositionYSeekBarListener);
+        Seek_touch_area_position_y.setSaveEnabled(false);
 
         CTV_stylus_only_mode = (CheckedTextView) findViewById(R.id.CTV_stylus_only_mode);
         SP_bar_disappear_time = (Spinner) findViewById(R.id.SP_bar_disappear_time);
@@ -318,6 +323,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Seek_touch_area_width.getThumb().setColorFilter(new PorterDuffColorFilter(configColor, PorterDuff.Mode.SRC_IN));
         Seek_touch_area_position.getProgressDrawable().setColorFilter(new PorterDuffColorFilter(configColor, PorterDuff.Mode.SRC_IN));
         Seek_touch_area_position.getThumb().setColorFilter(new PorterDuffColorFilter(configColor, PorterDuff.Mode.SRC_IN));
+        Seek_touch_area_position_y.getProgressDrawable().setColorFilter(new PorterDuffColorFilter(configColor, PorterDuff.Mode.SRC_IN));
+        Seek_touch_area_position_y.getThumb().setColorFilter(new PorterDuffColorFilter(configColor, PorterDuff.Mode.SRC_IN));
     }
 
     private void initSeekBarContent() {
@@ -327,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int touchviewWidth;
         //Default Height init
         Seek_touch_area_height.setMax(screenHeight / MAX_HEIGHT_PERCENTAGE);
+        Seek_touch_area_position_y.setMax(screenHeight);
 
         //Default width init
         Seek_touch_area_width.setMax(screenWidth);
@@ -335,6 +343,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             touchviewWidth = SPFManager.getTouchviewPortraitWidth(this);
             //Height
             Seek_touch_area_height.setProgress(SPFManager.getTouchviewPortraitHeight(this));
+            Seek_touch_area_position_y.setProgress(SPFManager.getTouchviewPortraitPositionY(this));
             //position  + Width
             //For match content
             if (touchviewWidth == ScreenHepler.getDefautlTouchviewWidth()) {
@@ -350,6 +359,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             touchviewWidth = SPFManager.getTouchviewLandscapeWidth(this);
             //Height
             Seek_touch_area_height.setProgress(SPFManager.getTouchviewLandscapeHeight(this));
+            Seek_touch_area_position_y.setProgress(SPFManager.getTouchviewLandscapePositionY(this));
             //position  + Width
             //For match content
             if (touchviewWidth == ScreenHepler.getDefautlTouchviewWidth()) {
@@ -386,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             ServiceFloating mAccessibilityService = ServiceFloating.getSharedInstance();
             if (mAccessibilityService != null) {
-                mAccessibilityService.updateTouchView(seekBar.getProgress(), null, null);
+                mAccessibilityService.updateTouchView(seekBar.getProgress(), null, null, null);
                 mAccessibilityService = null;
             }
         }
@@ -422,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 }
                 if (mAccessibilityService != null) {
-                    mAccessibilityService.updateTouchView(null, ViewGroup.LayoutParams.MATCH_PARENT, Seek_touch_area_position.getProgress());
+                    mAccessibilityService.updateTouchView(null, ViewGroup.LayoutParams.MATCH_PARENT, Seek_touch_area_position.getProgress(), null);
                     mAccessibilityService = null;
                 }
             } else {
@@ -432,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SPFManager.setTouchviewLandscapeWidth(MainActivity.this, seekBar.getProgress());
                 }
                 if (mAccessibilityService != null) {
-                    mAccessibilityService.updateTouchView(null, seekBar.getProgress(), Seek_touch_area_position.getProgress());
+                    mAccessibilityService.updateTouchView(null, seekBar.getProgress(), Seek_touch_area_position.getProgress(), null);
                     mAccessibilityService = null;
                 }
             }
@@ -451,6 +461,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    private SeekBar.OnSeekBarChangeListener touchviewPositionYSeekBarListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            if (isPortrait) {
+                SPFManager.setTouchviewPortraitPositionY(MainActivity.this, seekBar.getProgress());
+            } else {
+                SPFManager.setTouchviewLandscapePositionY(MainActivity.this, seekBar.getProgress());
+            }
+            ServiceFloating mAccessibilityService = ServiceFloating.getSharedInstance();
+            if (mAccessibilityService != null) {
+                mAccessibilityService.updateTouchView(null, null, null, seekBar.getProgress());
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch (SeekBar seekBar){
+
+        }
+
+        @Override
+        public void onProgressChanged (SeekBar seekBar,int progress, boolean fromUser){
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) View_touchviewer.getLayoutParams();
+            params.bottomMargin = progress;
+            View_touchviewer.setLayoutParams(params);
+        }
+    };
+
     private SeekBar.OnSeekBarChangeListener touchviewPositionSeekBarListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
@@ -461,7 +498,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             ServiceFloating mAccessibilityService = ServiceFloating.getSharedInstance();
             if (mAccessibilityService != null) {
-                mAccessibilityService.updateTouchView(null, null, seekBar.getProgress());
+                mAccessibilityService.updateTouchView(null, null, seekBar.getProgress(), null);
             }
         }
 

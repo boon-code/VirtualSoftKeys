@@ -17,10 +17,12 @@ public class SPFManager {
     private static final String CONFIG_P_TOUCHVIEW_HEIGHT = "P_TOUCHVIEW_HEIGHT";
     private static final String CONFIG_P_TOUCHVIEW_WIDTH = "P_TOUCHVIEW_WIDTH";
     private static final String CONFIG_P_TOUCHVIEW_POSITION = "P_TOUCHVIEW_POSITION";
+    private static final String CONFIG_P_TOUCHVIEW_POSITION_Y = "P_TOUCHVIEW_POSITION_Y";
     //Landscape config
     private static final String CONFIG_L_TOUCHVIEW_HEIGHT = "L_TOUCHVIEW_HEIGHT";
     private static final String CONFIG_L_TOUCHVIEW_WIDTH = "L_TOUCHVIEW_WIDTH";
     private static final String CONFIG_L_TOUCHVIEW_POSITION = "L_TOUCHVIEW_POSITION";
+    private static final String CONFIG_L_TOUCHVIEW_POSITION_Y = "L_TOUCHVIEW_POSITION_Y";
 
     //Shared config
     private static final String CONFIG_STYLUS_ONLY_MODE = "STYLUS_ONLY_MODE";
@@ -81,10 +83,23 @@ public class SPFManager {
         return settings.getInt(CONFIG_P_TOUCHVIEW_POSITION, 0);
     }
 
+    public static int getTouchviewPortraitPositionY(Context context) {
+        SharedPreferences settings = context.getSharedPreferences(SPF_CONFIG_NEME, 0);
+        //Default width is match_content , so  position = 0
+        return settings.getInt(CONFIG_P_TOUCHVIEW_POSITION_Y, 0);
+    }
+
     public static void setTouchviewPortraitPosition(Context context, int position) {
         SharedPreferences settings = context.getSharedPreferences(SPF_CONFIG_NEME, 0);
         SharedPreferences.Editor PE = settings.edit();
         PE.putInt(CONFIG_P_TOUCHVIEW_POSITION, position);
+        PE.commit();
+    }
+
+    public static void setTouchviewPortraitPositionY(Context context, int position_y) {
+        SharedPreferences settings = context.getSharedPreferences(SPF_CONFIG_NEME, 0);
+        SharedPreferences.Editor PE = settings.edit();
+        PE.putInt(CONFIG_P_TOUCHVIEW_POSITION_Y, position_y);
         PE.commit();
     }
 
@@ -122,10 +137,23 @@ public class SPFManager {
         return settings.getInt(CONFIG_L_TOUCHVIEW_POSITION, 0);
     }
 
+    public static int getTouchviewLandscapePositionY(Context context) {
+        SharedPreferences settings = context.getSharedPreferences(SPF_CONFIG_NEME, 0);
+        //Default width is match_content , so  position = 0
+        return settings.getInt(CONFIG_L_TOUCHVIEW_POSITION_Y, 0);
+    }
+
     public static void setTouchviewLandscapePosition(Context context, int position) {
         SharedPreferences settings = context.getSharedPreferences(SPF_CONFIG_NEME, 0);
         SharedPreferences.Editor PE = settings.edit();
         PE.putInt(CONFIG_L_TOUCHVIEW_POSITION, position);
+        PE.commit();
+    }
+
+    public static void setTouchviewLandscapePositionY(Context context, int position_y) {
+        SharedPreferences settings = context.getSharedPreferences(SPF_CONFIG_NEME, 0);
+        SharedPreferences.Editor PE = settings.edit();
+        PE.putInt(CONFIG_L_TOUCHVIEW_POSITION_Y, position_y);
         PE.commit();
     }
 

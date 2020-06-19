@@ -69,12 +69,14 @@ public class TouchEventView implements View.OnTouchListener {
             miniTouchGestureHeight = SPFManager.getTouchviewPortraitHeight(accessibilityService) / MINI_TOUCH_GESTURE_HIEGHT_SENSITIVITY;
             //transparent color
             windowManager.addView(touchView, createTouchViewParams(SPFManager.getTouchviewPortraitHeight(accessibilityService),
-                    SPFManager.getTouchviewPortraitWidth(accessibilityService), SPFManager.getTouchviewPortraitPosition(accessibilityService)));
+                    SPFManager.getTouchviewPortraitWidth(accessibilityService), SPFManager.getTouchviewPortraitPosition(accessibilityService),
+                    SPFManager.getTouchviewPortraitPositionY(accessibilityService)));
         } else {
             miniTouchGestureHeight = SPFManager.getTouchviewLandscapeHeight(accessibilityService) / MINI_TOUCH_GESTURE_HIEGHT_SENSITIVITY;
             //transparent color
             windowManager.addView(touchView, createTouchViewParams(SPFManager.getTouchviewLandscapeHeight(accessibilityService),
-                    SPFManager.getTouchviewLandscapeWidth(accessibilityService), SPFManager.getTouchviewLandscapePosition(accessibilityService)));
+                    SPFManager.getTouchviewLandscapeWidth(accessibilityService), SPFManager.getTouchviewLandscapePosition(accessibilityService),
+                    SPFManager.getTouchviewLandscapePositionY(accessibilityService)));
         }
 
     }
@@ -83,7 +85,7 @@ public class TouchEventView implements View.OnTouchListener {
         windowManager.updateViewLayout(touchView, params);
     }
 
-    private WindowManager.LayoutParams createTouchViewParams(int heightPx, int weightPx, int position) {
+    private WindowManager.LayoutParams createTouchViewParams(int heightPx, int weightPx, int position, int position_y) {
         WindowManager.LayoutParams params;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             params = new WindowManager.LayoutParams(
@@ -102,7 +104,7 @@ public class TouchEventView implements View.OnTouchListener {
         }
         params.gravity = Gravity.BOTTOM | Gravity.LEFT;
         params.x = position;
-        params.y = 0;
+        params.y = position_y;
         return params;
     }
 
